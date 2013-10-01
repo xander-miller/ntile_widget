@@ -1,9 +1,9 @@
 #Ntile Widget#
+A [Dashing widget](https://github.com/Shopify/dashing) that shows numbers in statistical context. This widget is also available in a [GitHub Gist](https://gist.github.com/PareidoliaX/6757706) for easy installation using the Dashing command line.
+
 ![Demo Dashboard Screenshot](http://i.imgur.com/Dd0dCjI.png)
 
 ##Description##
-A [Dashing widget](https://github.com/Shopify/dashing) that shows numbers in statistical context.
-
 A Dashing widget (and an associated job) that will take any set of timestamped data, divid that data by day (or any other unit of time) and compare those units of time, and displays the current day in statistical context of previous days. It currently has three modes of operation [Quartile](http://en.wikipedia.org/wiki/Quartile), [Quintile](http://en.wiktionary.org/wiki/quintile) and [Percentile](http://en.wiktionary.org/wiki/percentile) (hench 'N'tile). The code is designed to take in a variety of data sources. Examples include:
 + Display number of new users your app has attracted this week compared to previous weeks.
 + Display how many customer service tickets have been closed by an individual employee today in the context of their daily performance.
@@ -18,7 +18,16 @@ gem 'activesupport'
 
 ##Installation##
 
-On the command line, use the Dashing generate command to make an ntile job and ntile widget:
+###Gist Installation###
+On the command line:
+```
+dashing install 6757706
+```
+Done.
+**Note:** If you want the widget to work as in the example you'll still need to install the example dashboard and add the example data gem dependencies to your gemfile.
+
+###Manual Installation###
+Alternatively, if you prefer not to use Dashing Gist Installation, on the command line, use the Dashing generate command to make an ntile job and ntile widget:
 ```
 dashing g widget Ntile
 dashing g job Ntile
