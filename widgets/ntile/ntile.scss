@@ -1,0 +1,67 @@
+// ----------------------------------------------------------------------------
+// Sass declarations
+// ----------------------------------------------------------------------------
+$background-color:  #7BDB3B;
+$value-color:       #fff;
+
+$title-color:       rgba(255, 255, 255, 0.7);
+$moreinfo-color:    rgba(255, 255, 255, 0.7);
+
+// ----------------------------------------------------------------------------
+// Widget-number styles
+// ----------------------------------------------------------------------------
+
+
+.widget-ntile {
+
+  background-color: $background-color;
+
+  .title {
+    color: $title-color;
+  }
+
+  .value {
+    color: $value-color;
+  }
+
+  .next-rank {
+    font-weight: 500;
+    font-size: 24px;
+    color: $value-color;
+  }
+
+  .updated-at {
+    color: rgba(0, 0, 0, 0.3);
+  }
+
+  .rank {
+    text-transform: uppercase;
+    font-size: 76px;
+    font-weight: 700;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    line-height:70%
+  }
+
+  .suffix {
+    text-transform: uppercase;
+    font-size: 36px;
+    font-weight: 700;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    line-height:70%
+  }
+
+  .rank-box {
+    display: block;
+    padding-bottom: 30px;
+    padding-top: 30px;
+  }
+
+  .mode {
+    font-size: 15px;
+    line-height:70%
+  }
+
+
+}

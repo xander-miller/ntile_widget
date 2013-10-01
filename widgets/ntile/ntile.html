@@ -1,0 +1,17 @@
+
+<h1 class="title" data-bind="title"></h1>
+
+<p> 
+  <span class="next-text" data-bind="next_text"></span>
+  <span class="next-rank" data-bind="next_rank_value | prepend prefix"></span>
+</p>
+
+<div class="rank-box">
+  <p><span class="rank" data-bind="rank"></span><span class="suffix" data-bind="suffix"></span></p>
+  <p class="mode" data-bind="mode"></p>
+</div> 
+
+<p>Current Value <span class="value" data-bind="value | prepend prefix"></span></p>
+
+<p class="more-info" data-bind="moreinfo | raw"></p>
+<p class="updated-at" data-bind="updatedAtMessage"></p>
