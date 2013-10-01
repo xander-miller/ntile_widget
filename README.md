@@ -24,6 +24,7 @@ On the command line:
 dashing install 6757706
 ```
 Done.
+
 **Note:** If you want the widget to work as in the example you'll still need to install the example dashboard and add the example data gem dependencies to your gemfile.
 
 ###Manual Installation###
