@@ -1,10 +1,10 @@
 class Cooper # Maker of Barrels and Buckets and in this case sorter of buckets too.
-  attr_reader :current_rank, :current_value
+  attr_reader :current_rank, :current_value, :bucket_shape
 
   @@coopers = []
 
   def initialize(data_set, opt_params = {})
-    params = {ntile: 5, timestamp_label: :timestamp, bucket_shape: '%b%d%y', sum_label: nil}.merge!(opt_params)
+    params = {ntile: 5, timestamp_label: :timestamp, bucket_shape: '%b%y%d', sum_label: nil}.merge!(opt_params)
     data_set ? @data_set = data_set : @data_set = []
     @ntile = params[:ntile]
     @timestamp_label = params[:timestamp_label]
@@ -16,11 +16,14 @@ class Cooper # Maker of Barrels and Buckets and in this case sorter of buckets t
     @current_value = calc_current_value
     current
     @@coopers << self
+    @garbage_tracker = []
   end
 
   def add_event(event)
-    @buckets[current] << event
-    tally_buckets
+    @buckets[current] ||= []
+    @buckets[bucket_label(event[@timestamp_label])] ||= []
+    @buckets[bucket_label(event[@timestamp_label])] << event
+    update_tally
   end
 
   def coop
@@ -33,7 +36,7 @@ class Cooper # Maker of Barrels and Buckets and in this case sorter of buckets t
   end
 
   def update_widget
-    { 
+    return_hash = { 
       value: calc_current_value, 
       rank: calc_current_rank,
       suffix: rank_suffix,
@@ -41,6 +44,7 @@ class Cooper # Maker of Barrels and Buckets and in this case sorter of buckets t
       next_text: next_text,
       next_rank_value: next_rank_value 
     }
+    return_hash
   end
 
 
@@ -50,15 +54,37 @@ class Cooper # Maker of Barrels and Buckets and in this case sorter of buckets t
       if @sum_label
         bucket_sum = 0
         bucket.each {|event| bucket_sum += event[@sum_label]}
-        @tally << [key,bucket_sum]
+        @tally << [key,bucket_sum,0]
       else
-        @tally << [key,bucket.count]
+        @tally << [key,bucket.count,0]
       end
     end
+    tally_sort
+  end
+
+  def tally_sort
     @tally.sort! {|a,b| a[1] <=> b[1]}
     @tally.each_index do |index|
-      @tally[index] = [@tally[index],(index.to_f/(@tally.length.to_f/@ntile)).to_i + 1].flatten!
+      @tally[index][2] = (index.to_f/(@tally.length.to_f/@ntile)).to_i + 1
     end
+  end
+
+  def update_tally()
+    current_tally = 0
+    handle_garbage
+    if @sum_label
+      bucket_sum = 0  
+      @buckets[current].each {|event| bucket_sum += event[@sum_label]}
+      current_tally = bucket_sum
+    else
+      current_tally = @buckets[@current_label].length
+    end
+    if @tally.flatten.include?(@current_label)
+       @tally[@tally.index {|tuple| tuple[0] == @current_label}][1] = current_tally 
+    else
+       @tally << [@current_label,current_tally,0]
+    end
+    tally_sort
   end
 
   def calc_current_rank
@@ -86,6 +112,7 @@ class Cooper # Maker of Barrels and Buckets and in this case sorter of buckets t
       rank_up = tuple[1] + 1 if (rank_up == 0) and (@current_rank < tuple[2])
     end
     rank_up = @current_value if rank_up == 0
+    rank_up
   end
 
   def next_text
@@ -120,6 +147,16 @@ class Cooper # Maker of Barrels and Buckets and in this case sorter of buckets t
   end
 
   private
+
+  def handle_garbage
+    @garbage_tracker << @current_label unless @garbage_tracker.include?(current)
+    @garbage_tracker = @garbage_tracker.drop(@garbage_tracker.length - 5) if @garbage_tracker.length > 5
+    @buckets.keep_if {|key,value| @garbage_tracker.include?(key)} if @garbage_tracker.length >= 5
+    if @tally.length > 1000
+      @tally.sort! {|a,b| a[0] <=> b[0]}
+      @tally = @tally.drop(@tally.length - 600)
+    end
+  end
 
   def bucket_label(timestamp)
     timestamp.strftime(@bucket_shape).to_sym
